@@ -99,6 +99,9 @@ namespace CateringManagement.Models
         [Display(Name = "No Gratuity")]
         public bool NoGratuity { get; set; } = false; //NoGratuity
 
+        [Display(Name = "Alcohol Served")]
+        public bool Alcohol { get; set; } = false; //Alcohol
+
         // foreign keys
         [Display(Name = "Customer")]
         [Required(ErrorMessage = "You must select a Customer")]

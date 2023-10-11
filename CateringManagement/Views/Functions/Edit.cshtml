@@ -82,6 +82,11 @@
                     <input class="form-check-input" asp-for="NoGratuity" /> @Html.DisplayNameFor(model => model.NoGratuity)
                 </label>
             </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Alcohol" /> @Html.DisplayNameFor(model => model.Alcohol)
+                </label>
+            </div>
             <div class="form-group">
                 <label asp-for="CustomerID" class="control-label"></label>
                 <select asp-for="CustomerID" class="form-control" asp-items="ViewBag.CustomerID"></select>
