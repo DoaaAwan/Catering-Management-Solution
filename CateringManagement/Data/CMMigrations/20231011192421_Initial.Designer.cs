@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CateringManagement.Data.CMMigrations
 {
     [DbContext(typeof(CateringContext))]
-    [Migration("20231011161124_Initial")]
+    [Migration("20231011192421_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

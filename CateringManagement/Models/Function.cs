@@ -42,9 +42,10 @@ namespace CateringManagement.Models
         //Date will become StartTime
 
         [Required(ErrorMessage = "You cannot leave the date blank.")]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime StartTime { get; set; } = DateTime.Today;
+        [Display(Name = "Start Time")]
+        [DataType(DataType.DateTime)]
+        //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime StartTime { get; set; } = DateTime.Today; //changed Date to StartTime
 
         //Eliminate the DurationDays property from the Function class
 

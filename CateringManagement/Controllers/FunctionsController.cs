@@ -64,7 +64,7 @@ namespace CateringManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,LobbySign,Date,DurationDays,BaseCharge,PerPersonCharge,GuaranteedNumber,SOCAN,Deposit,DepositPaid,NoHST,NoGratuity,CustomerID,FunctionTypeID")] Function function)
+        public async Task<IActionResult> Create([Bind("ID,Name,LobbySign,StartTime,DurationDays,BaseCharge,PerPersonCharge,GuaranteedNumber,SOCAN,Deposit,DepositPaid,NoHST,NoGratuity,CustomerID,FunctionTypeID")] Function function) //changed date to starttime
         {
             try
             {
