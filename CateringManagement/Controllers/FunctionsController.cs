@@ -64,8 +64,9 @@ namespace CateringManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,LobbySign,StartTime,SetupNotes,DurationDays,BaseCharge,PerPersonCharge,GuaranteedNumber,SOCAN,Deposit,DepositPaid,NoHST,NoGratuity,CustomerID,FunctionTypeID")] Function function) //changed date to starttime
-        {                                                               //added SetupNotes
+        public async Task<IActionResult> Create([Bind("ID,Name,LobbySign,StartTime, EndTime, SetupNotes,DurationDays,BaseCharge,PerPersonCharge,GuaranteedNumber,SOCAN,Deposit,DepositPaid,NoHST,NoGratuity,CustomerID,FunctionTypeID")] Function function) //changed date to starttime
+        {                                 //added SetupNotes
+                                          //added EndTime
             try
             {
                 if (ModelState.IsValid)
@@ -118,10 +119,11 @@ namespace CateringManagement.Controllers
             }
 
             if (await TryUpdateModelAsync<Function>(functionToUpdate, "", 
-                f => f.Name, f => f.LobbySign, f => f.SetupNotes, f => f.StartTime, f => f.BaseCharge, f => f.PerPersonCharge,
+                f => f.Name, f => f.LobbySign, f => f.SetupNotes, f => f.StartTime, f => f.EndTime, f => f.BaseCharge, f => f.PerPersonCharge,
                 f => f.GuaranteedNumber, f => f.SOCAN, f => f.Deposit, f => f.DepositPaid, f => f.NoHST, f => f.NoGratuity,
                 f => f.CustomerID, f => f.FunctionTypeID))          //removed DurationDays
             {                                                       //added SetupNotes
+                                                                    //added EndTime 
                 try
                 {
                     await _context.SaveChangesAsync();

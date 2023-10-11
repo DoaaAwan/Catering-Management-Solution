@@ -42,23 +42,29 @@ namespace CateringManagement.Models
 
         [Display(Name = "Setup Notes")]
         [StringLength(2000, ErrorMessage = "Notes cannot be more than 2000 characters long.")] //max length: 2000
+        [DataType(DataType.MultilineText)]
         public string SetupNotes { get; set; } //SetupNotes
 
         //Date will become StartTime
 
-        [Required(ErrorMessage = "You cannot leave the start time blank.")]
-        [Display(Name = "Start Time")]
+        [Required(ErrorMessage = "You cannot leave the start date and time blank.")]
+        [Display(Name = "Function Start")]
         [DataType(DataType.DateTime)]
         //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime StartTime { get; set; } = DateTime.Today; //StartTime
                                                                   //changed Date to StartTime
 
+        [Display(Name = "Function End")]
+        [DataType(DataType.DateTime)]
+
+        public DateTime? EndTime { get; set; } //EndTime
+
         //Eliminate the DurationDays property from the Function class
 
-            //[Required(ErrorMessage = "You must enter the duration.")]
-            //[Display(Name = "Duration Days")]
-            //[Range(1, int.MaxValue, ErrorMessage = "Duration must be greater than zero.")]
-            //public int DurationDays { get; set; } = 1;
+        //[Required(ErrorMessage = "You must enter the duration.")]
+        //[Display(Name = "Duration Days")]
+        //[Range(1, int.MaxValue, ErrorMessage = "Duration must be greater than zero.")]
+        //public int DurationDays { get; set; } = 1;
 
         [Required(ErrorMessage = "You must enter the Base Charge.")]
         [Display(Name = "Base Charge")]
@@ -111,13 +117,19 @@ namespace CateringManagement.Models
             //Function Date cannot be before January 1st, 2018 because that is when the Hotel opened.
             if (StartTime < DateTime.Parse("2018-01-01"))
             {
-                yield return new ValidationResult("Date cannot be before January 1st, 2018.", new[] { "Date" });
+                yield return new ValidationResult("Date cannot be before January 1st, 2018.", new[] { "StartTime" });
             }
 
             // Function Date cannot be more than 10 years in the future from the current date.
             if (StartTime > DateTime.Now.AddYears(10))
             {
-                yield return new ValidationResult("Date cannot be more than 10 years in the future.", new[] { "Date" });
+                yield return new ValidationResult("Date cannot be more than 10 years in the future.", new[] { "StartTime" });
+            }
+
+            //The function cannot end before it starts
+            if (EndTime < StartTime)
+            {
+                yield return new ValidationResult("End time cannot be before Start time.", new[] { "EndTime" });
             }
         }
     }
