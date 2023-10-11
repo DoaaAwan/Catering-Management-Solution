@@ -4,7 +4,7 @@ namespace CateringManagement.Models
 {
     public class Function : IValidatableObject
     {
-        public int ID { get; set; }
+        public int ID { get; set; } //ID
 
         #region Summary Properties
 
@@ -33,19 +33,25 @@ namespace CateringManagement.Models
         #endregion
 
         [StringLength(120, ErrorMessage = "Name cannot be more than 120 characters long.")]
-        public string Name { get; set; }
+        public string Name { get; set; } //Name
 
         [Display(Name = "Lobby Sign")]
         [StringLength(60, ErrorMessage = "Lobby sign cannot be more than 60 characters long.")]
-        public string LobbySign { get; set; }
+        public string LobbySign { get; set; } //LobbySign
+
+
+        [Display(Name = "Setup Notes")]
+        [StringLength(2000, ErrorMessage = "Notes cannot be more than 2000 characters long.")] //max length: 2000
+        public string SetupNotes { get; set; } //SetupNotes
 
         //Date will become StartTime
 
-        [Required(ErrorMessage = "You cannot leave the date blank.")]
+        [Required(ErrorMessage = "You cannot leave the start time blank.")]
         [Display(Name = "Start Time")]
         [DataType(DataType.DateTime)]
         //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime StartTime { get; set; } = DateTime.Today; //changed Date to StartTime
+        public DateTime StartTime { get; set; } = DateTime.Today; //StartTime
+                                                                  //changed Date to StartTime
 
         //Eliminate the DurationDays property from the Function class
 
@@ -57,7 +63,7 @@ namespace CateringManagement.Models
         [Required(ErrorMessage = "You must enter the Base Charge.")]
         [Display(Name = "Base Charge")]
         [DataType(DataType.Currency)]
-        public double BaseCharge { get; set; }
+        public double BaseCharge { get; set; } //BaseCharge
 
         [Required(ErrorMessage = "You must enter the Charge Per Person.")]
         [Display(Name = "Per Person")]

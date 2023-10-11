@@ -23,15 +23,20 @@
                 <span asp-validation-for="LobbySign" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="SetupNotes" class="control-label"></label>
+                <input asp-for="SetupNotes" class="form-control" />
+                <span asp-validation-for="SetupNotes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="StartTime" class="control-label"></label>
                 <input asp-for="StartTime" class="form-control" />
                 <span asp-validation-for="StartTime" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                @*<label asp-for="DurationDays" class="control-label"></label>
+@*            <div class="form-group">
+                <label asp-for="DurationDays" class="control-label"></label>
                 <input asp-for="DurationDays" class="form-control" />
-                <span asp-validation-for="DurationDays" class="text-danger"></span>*@
-            </div>
+                <span asp-validation-for="DurationDays" class="text-danger"></span>
+            </div>*@
             <div class="form-group">
                 <label asp-for="BaseCharge" class="control-label"></label>
                 <input asp-for="BaseCharge" class="form-control" />
