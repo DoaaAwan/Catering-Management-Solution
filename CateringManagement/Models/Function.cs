@@ -103,6 +103,14 @@ namespace CateringManagement.Models
         public bool Alcohol { get; set; } = false; //Alcohol
 
         // foreign keys
+
+        [Display(Name = "Meal Type")]
+        public int? MealTypeID { get; set; } //MealTypeID (not required)
+
+        [Display(Name = "Meal Type")]
+        public FunctionType MealType { get; set; } //MealType
+
+
         [Display(Name = "Customer")]
         [Required(ErrorMessage = "You must select a Customer")]
         public int CustomerID { get; set; } //CustomerID
