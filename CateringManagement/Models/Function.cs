@@ -74,43 +74,43 @@ namespace CateringManagement.Models
         [Required(ErrorMessage = "You must enter the Charge Per Person.")]
         [Display(Name = "Per Person")]
         [DataType(DataType.Currency)]
-        public double PerPersonCharge { get; set; }
+        public double PerPersonCharge { get; set; } //PerPersonCharge
 
         [Required(ErrorMessage = "The Guaranteed Number is required.")]
         [Display(Name = "Guaranteed Number")]
         [Range(1, int.MaxValue, ErrorMessage = "Guaranteed number must be greater than zero")]
-        public int GuaranteedNumber { get; set; } = 1;
+        public int GuaranteedNumber { get; set; } = 1; //GuaranteedNumber
 
         [Required(ErrorMessage = "You must enter a value for the SOCAN fee.  Use 0.00 if no fee is applicable.")]
         [Display(Name = "SOCAN")]
         [DataType(DataType.Currency)]
-        public double SOCAN { get; set; } = 50.00;
+        public double SOCAN { get; set; } = 50.00; //SOCAN
 
         [Required(ErrorMessage = "Amount for the Deposit is required.")]
         [DataType(DataType.Currency)]
-        public double Deposit { get; set; }
+        public double Deposit { get; set; } //Deposit
 
         [Display(Name = "Deposit Paid")]
-        public bool DepositPaid { get; set; } = false;
+        public bool DepositPaid { get; set; } = false; //DepositPaid
 
         [Display(Name = "No HST")]
-        public bool NoHST { get; set; } = false;
+        public bool NoHST { get; set; } = false; //NoHST
 
         [Display(Name = "No Gratuity")]
-        public bool NoGratuity { get; set; } = false;
+        public bool NoGratuity { get; set; } = false; //NoGratuity
 
         // foreign keys
         [Display(Name = "Customer")]
         [Required(ErrorMessage = "You must select a Customer")]
-        public int CustomerID { get; set; }
-        public Customer Customer { get; set; }
+        public int CustomerID { get; set; } //CustomerID
+        public Customer Customer { get; set; } //Customer
 
         [Display(Name = "Function Type")]
         [Required(ErrorMessage = "You must select a Function Type")]
-        public int FunctionTypeID { get; set; }
+        public int FunctionTypeID { get; set; } //FunctionTypeID
 
         [Display(Name = "Function Type")]
-        public FunctionType FunctionType { get; set; }
+        public FunctionType FunctionType { get; set; } //FunctionType
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
