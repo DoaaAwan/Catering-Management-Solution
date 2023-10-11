@@ -108,7 +108,7 @@ namespace CateringManagement.Models
         public int? MealTypeID { get; set; } //MealTypeID (not required)
 
         [Display(Name = "Meal Type")]
-        public FunctionType MealType { get; set; } //MealType
+        public MealType MealType { get; set; } //MealType
 
 
         [Display(Name = "Customer")]
