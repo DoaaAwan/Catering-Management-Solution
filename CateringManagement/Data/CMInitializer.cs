@@ -84,6 +84,41 @@ namespace CateringManagement.Data
 
                     context.SaveChanges();
                 }
+                // Seed MealTypes if there aren't any.
+                if (!context.MealTypes.Any())
+                {
+                    context.MealTypes.AddRange(
+                        new MealType
+                        {
+                            Name = "None"
+                        },
+                        new MealType
+                        {
+                            Name = "Vegetarian"
+                        },
+                        new MealType
+                        {
+                            Name = "Vegan"
+                        },
+                        new MealType
+                        {
+                            Name = "Pescatarian"
+                        },
+                        new MealType
+                        {
+                            Name = "Gluten-Free"
+                        },
+                        new MealType
+                        {
+                            Name = "Halal"
+                        },
+                        new MealType
+                        {
+                            Name = "Kosher"
+                        });
+
+                    context.SaveChanges();
+                }
                 // Seed Functions if there aren't any.
                 if (!context.Functions.Any())
                 {
@@ -93,6 +128,7 @@ namespace CateringManagement.Data
                             Name = "JPMorgan Chase Shareholders Meeting",
                             LobbySign = "JPMorgan Chase",
                             StartTime = new DateTime(2023, 11, 11),
+                            EndTime = new DateTime(2023, 11, 12),
                             //DurationDays = 2,
                             BaseCharge = 22000.00,
                             PerPersonCharge = 125.00,
@@ -102,6 +138,8 @@ namespace CateringManagement.Data
                             DepositPaid = true,
                             NoHST = false,
                             NoGratuity = false,
+                            Alcohol = true,
+                            MealTypeID = context.MealTypes.FirstOrDefault(d => d.Name == "Vegan").ID,
                             CustomerID = context.Customers.FirstOrDefault(d => d.FirstName == "Gregory" && d.LastName == "House").ID,
                             FunctionTypeID = context.FunctionTypes.FirstOrDefault(f => f.Name == "Meeting").ID
                         },
@@ -110,6 +148,7 @@ namespace CateringManagement.Data
                             Name = "Xavier Birthday Party",
                             LobbySign = "Happy Birthday Mom!",
                             StartTime = new DateTime(2023, 12, 12),
+                            EndTime = new DateTime(2023, 12, 13),
                             //DurationDays = 1,
                             BaseCharge = 1000.00,
                             PerPersonCharge = 20.00,
@@ -119,6 +158,8 @@ namespace CateringManagement.Data
                             DepositPaid = true,
                             NoHST = false,
                             NoGratuity = false,
+                            Alcohol = false,
+                            MealTypeID = context.MealTypes.FirstOrDefault(d => d.Name == "None").ID,
                             CustomerID = context.Customers.FirstOrDefault(c => c.FirstName == "Charles" && c.LastName == "Xavier").ID,
                             FunctionTypeID = context.FunctionTypes.FirstOrDefault(f => f.Name == "Birthday").ID
                         },
@@ -127,6 +168,7 @@ namespace CateringManagement.Data
                             Name = "Behind the Numbers: What’s Causing Growth in Food Prices",
                             LobbySign = "Food Price Inflation",
                             StartTime = new DateTime(2023, 12, 25),
+                            EndTime = new DateTime(2023, 12, 26),
                             //DurationDays = 1,
                             BaseCharge = 2000.00,
                             PerPersonCharge = 50.00,
@@ -136,6 +178,8 @@ namespace CateringManagement.Data
                             DepositPaid = false,
                             NoHST = true,
                             NoGratuity = true,
+                            Alcohol = false,
+                            MealTypeID = context.MealTypes.FirstOrDefault(d => d.Name == "Gluten-Free").ID,
                             CustomerID = context.Customers.FirstOrDefault(c => c.FirstName == "Doogie" && c.LastName == "Houser").ID,
                             FunctionTypeID = context.FunctionTypes.FirstOrDefault(f => f.Name == "Presentation").ID
                         });
