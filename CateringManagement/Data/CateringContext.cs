@@ -38,6 +38,24 @@ namespace CateringManagement.Data
             modelBuilder.Entity<Customer>()
             .HasIndex(c => c.CustomerCode)
             .IsUnique();
+
+            //Prevent Cascade Delete from Room to FunctionRoom
+            //so we are prevented from deleting a Room with
+            //Functions assigned
+            modelBuilder.Entity<Room>() 
+                .HasMany<FunctionRoom>(c => c.FunctionRooms)
+                .WithOne(f => f.Room)
+                .HasForeignKey(f => f.RoomID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //Prevent Cascade Delete from MealType to Function
+            //so we are prevented from deleting a MealType with
+            //Functions assigned
+            modelBuilder.Entity<MealType>()
+                .HasMany<Function>(ft => ft.Functions)
+                .WithOne(f => f.MealType)
+                .HasForeignKey(f => f.MealTypeID)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -14,6 +14,6 @@ namespace CateringManagement.Models
         [Required(ErrorMessage = "You cannot leave the Capacity blank.")] //required
         public int Capacity { get {  return Capacity; } set { if (value > 0) Capacity = value; } } //must be > 0
 
-        public ICollection<FunctionRoom> FunctionRooms { get; set; } = new HashSet<FunctionRoom>();
+        public ICollection<FunctionRoom> FunctionRooms { get; set; } = new HashSet<FunctionRoom>(); //collection of FunctionRooms
     }
 }
