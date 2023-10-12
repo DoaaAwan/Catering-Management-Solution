@@ -123,6 +123,10 @@ namespace CateringManagement.Models
         [Display(Name = "Function Type")]
         public FunctionType FunctionType { get; set; } //FunctionType
 
+
+        [Display(Name = "Function Rooms")]
+        public ICollection<FunctionRoom> FunctionRooms { get; set; } = new HashSet<FunctionRoom>();
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             //Function Date cannot be before January 1st, 2018 because that is when the Hotel opened.

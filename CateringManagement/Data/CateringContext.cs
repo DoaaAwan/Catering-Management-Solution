@@ -14,6 +14,10 @@ namespace CateringManagement.Data
         public DbSet<FunctionType> FunctionTypes { get; set; }
         public DbSet<Function> Functions { get; set; }
 
+        public DbSet<FunctionRoom> FunctionRooms { get; set; } //added DbSets
+        public DbSet<Room> Rooms { get; set; }
+        public DbSet<MealType> MealTypes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Prevent Cascade Delete from Customer to Function
@@ -39,14 +43,7 @@ namespace CateringManagement.Data
             .HasIndex(c => c.CustomerCode)
             .IsUnique();
 
-            //Prevent Cascade Delete from Room to FunctionRoom
-            //so we are prevented from deleting a Room with
-            //Functions assigned
-            modelBuilder.Entity<Room>() 
-                .HasMany<FunctionRoom>(c => c.FunctionRooms)
-                .WithOne(f => f.Room)
-                .HasForeignKey(f => f.RoomID)
-                .OnDelete(DeleteBehavior.Restrict);
+
 
             //Prevent Cascade Delete from MealType to Function
             //so we are prevented from deleting a MealType with
@@ -56,6 +53,20 @@ namespace CateringManagement.Data
                 .WithOne(f => f.MealType)
                 .HasForeignKey(f => f.MealTypeID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            //Many to Many Intersection
+            modelBuilder.Entity<FunctionRoom>()
+            .HasKey(t => new { t.FunctionID, t.RoomID });
+
+            //Prevent Cascade Delete from Room to FunctionRoom
+            //so we are prevented from deleting a Room with
+            //Functions assigned
+            modelBuilder.Entity<Room>() 
+                .HasMany<FunctionRoom>(c => c.FunctionRooms)
+                .WithOne(f => f.Room)
+                .HasForeignKey(f => f.RoomID)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }
