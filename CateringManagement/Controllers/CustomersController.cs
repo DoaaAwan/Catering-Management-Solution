@@ -2,6 +2,7 @@
 using CateringManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CateringManagement.Controllers
 {
@@ -15,10 +16,82 @@ namespace CateringManagement.Controllers
         }
 
         // GET: Customers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string actionButton, string sortDirection = "asc", string sortField = "Customer")
         {
+            //List of sort options.
+            //NOTE: make sure this array has matching values to the column headings
+            string[] sortOptions = new[] { "Customer", "Company Name", "Phone Number", "Customer Code"};
+
             var customers = _context.Customers
                 .AsNoTracking();
+
+            if (sortOptions.Contains(actionButton))//Change of sort is requested
+            {
+                if (actionButton == sortField) //Reverse order on same field
+                {
+                    sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                }
+                sortField = actionButton;//Sort by the button clicked
+            }
+
+            //Now we know which field and direction to sort by
+            if (sortField == "Company Name")
+            {
+                if (sortDirection == "asc")
+                {
+                    customers = customers
+                        .OrderBy(c => c.CompanyName);
+                }
+                else
+                {
+                    customers = customers
+                        .OrderByDescending(c => c.CompanyName);
+                }
+            }
+            else if (sortField == "Phone Number")
+            {
+                if (sortDirection == "asc")
+                {
+                    customers = customers
+                        .OrderBy(c => c.Phone);
+                }
+                else
+                {
+                    customers = customers
+                        .OrderByDescending(c => c.Phone);
+                }
+            }
+            else if (sortField == "Customer Code")
+            {
+                if (sortDirection == "asc")
+                {
+                    customers = customers
+                        .OrderBy(c => c.CustomerCode);
+                }
+                else
+                {
+                    customers = customers
+                        .OrderByDescending(c => c.CustomerCode);
+                }
+            }
+            else //Sorting by Customer (default)
+            {
+                if (sortDirection == "asc")
+                {
+                    customers = customers
+                        .OrderBy(c => c.LastName)
+                        .ThenBy(c => c.FirstName);
+                }
+                else
+                {
+                    customers = customers
+                        .OrderByDescending(c => c.LastName)
+                        .ThenByDescending(c => c.FirstName);
+                }
+            }
+            //Set sort for next time
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
 
             return View(await customers.ToListAsync());
         }
