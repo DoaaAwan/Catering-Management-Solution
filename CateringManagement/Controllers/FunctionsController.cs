@@ -22,13 +22,43 @@ namespace CateringManagement.Controllers
         }
 
         // GET: Functions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchString, int? CustomerID)
         {
+            //Count the number of filters applied - start by assuming no filters
+            ViewData["Filtering"] = "btn-outline-secondary";
+            int numberFilters = 0;
+            //Then in each "test" for filtering, add to the count of Filters applied
+
+            PopulateDropDownLists();    //Data for Customer Filter DDL
             var functions = _context.Functions
                 .Include(f => f.Customer)
                 .Include(f => f.FunctionType)
                 .Include(f => f.FunctionRooms).ThenInclude(f=>f.Room)
                 .AsNoTracking();
+
+            //Add as many filters as needed
+            if (CustomerID.HasValue)
+            {
+                functions = functions.Where(p => p.CustomerID == CustomerID);
+                numberFilters++;
+            }
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                functions = functions.Where(f => f.Name.ToUpper().Contains(SearchString.ToUpper())
+                                       || f.LobbySign.ToUpper().Contains(SearchString.ToUpper()));
+                numberFilters++;
+            }
+            //Give feedback about the state of the filters
+            if (numberFilters != 0)
+            {
+                //Toggle the Open/Closed state of the collapse depending on if we are filtering
+                ViewData["Filtering"] = " btn-danger";
+                //Show how many filters have been applied
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+                //Keep the Bootstrap collapse open
+                @ViewData["ShowFilter"] = " show";
+            }
             return View(await functions.ToListAsync());
         }
 
