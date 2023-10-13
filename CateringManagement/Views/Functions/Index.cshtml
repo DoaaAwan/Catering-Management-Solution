@@ -10,6 +10,8 @@
     <a asp-action="Create">Create New Function</a>
 </p>
 <form asp-action="Index" method="get">
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <div class="form-horizontal">
         <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
             Filter/Search @ViewData["numberFilters"]
@@ -33,57 +35,65 @@
             </div>
         </div>
     </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    <input type="submit" name="actionButton" value="Function Date" class="btn btn-link" />
+                </th>
+                <th>
+                    <input type="submit" name="actionButton" value="Customer" class="btn btn-link" />
+                </th>
+                <th>
+                    <input type="submit" value="Room" class="btn btn-toolbar" />
+                </th>
+                <th>
+                    <input type="submit" value="Function" class="btn btn-toolbar" />
+                </th>
+                <th>
+                    <input type="submit" name="actionButton" value="Guaranteed Number" class="btn btn-link" />
+                </th>
+                <th>
+                    <input type="submit" value="Estimated Value" class="btn btn-toolbar" />
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartTime) 
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Customer.LastName), @Html.DisplayFor(modelItem => item.Customer.FirstName)
+
+                    </td>
+                    <td>
+                        @foreach (var c in item.FunctionRooms)
+                        {
+                            @c.Room.Name <br />
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FunctionType.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GuaranteedNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EstimatedValue)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </form>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Summary)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GuaranteedNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EstimatedValue)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Customer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FunctionRooms)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Summary)<br />
-                Type: @Html.DisplayFor(modelItem => item.FunctionType.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GuaranteedNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EstimatedValue)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Customer.FullName)
-            </td>
-            <td>
-                @foreach (var c in item.FunctionRooms)
-                {
-                    @c.Room.Name <br />
-                }
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>

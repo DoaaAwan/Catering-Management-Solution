@@ -22,14 +22,22 @@ namespace CateringManagement.Controllers
         }
 
         // GET: Functions
-        public async Task<IActionResult> Index(string SearchString, int? CustomerID)
+        public async Task<IActionResult> Index(string SearchString, int? CustomerID, string actionButton, string sortDirection = "asc", string sortField = "Function Date")
         {
             //Count the number of filters applied - start by assuming no filters
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
             //Then in each "test" for filtering, add to the count of Filters applied
 
+            //List of sort options.
+            //NOTE: make sure this array has matching values to the column headings
+            string[] sortOptions = new[] {"Function Date", "Guaranteed Number", "Customer"};
+
             PopulateDropDownLists();    //Data for Customer Filter DDL
+
+            //Start with Includes but make sure your expression returns an
+            //IQueryable<Patient> so we can add filter and sort 
+            //options later.
             var functions = _context.Functions
                 .Include(f => f.Customer)
                 .Include(f => f.FunctionType)
@@ -59,6 +67,66 @@ namespace CateringManagement.Controllers
                 //Keep the Bootstrap collapse open
                 @ViewData["ShowFilter"] = " show";
             }
+
+            //Before we sort, see if we have called for a change of filtering or sorting
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                if (sortOptions.Contains(actionButton))//Change of sort is requested
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton;//Sort by the button clicked
+                }
+            }
+
+            //Now we know which field and direction to sort by
+            if (sortField == "Customer")
+            {
+                if (sortDirection == "asc")
+                {
+                    functions = functions
+                        .OrderBy(f => f.Customer.LastName)
+                        .ThenBy(f => f.Customer.FirstName);
+                }
+                else
+                {
+                    functions = functions
+                        .OrderByDescending(f => f.Customer.LastName)
+                        .ThenByDescending(f => f.Customer.FirstName);
+                }
+            }
+            else if (sortField == "Guaranteed Number")
+            {
+                if (sortDirection == "asc")
+                {
+                    functions = functions
+                        .OrderBy(f => f.Customer.CompanyName);
+                }
+                else
+                {
+                    functions = functions
+                        .OrderByDescending(f => f.Customer.CompanyName);
+                }
+            }
+            else //Sorting by Function Date
+            {
+                if (sortDirection == "asc")
+                {
+                    functions = functions
+                        .OrderByDescending(f => f.StartTime);
+                }
+                else
+                {
+                    functions = functions
+                        .OrderBy(f => f.StartTime);
+                }
+            }
+            //Set sort for next time
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+
             return View(await functions.ToListAsync());
         }
 
