@@ -44,7 +44,6 @@ namespace CateringManagement.Data
             .IsUnique();
 
 
-
             //Prevent Cascade Delete from MealType to Function
             //so we are prevented from deleting a MealType with
             //Functions assigned
@@ -53,6 +52,7 @@ namespace CateringManagement.Data
                 .WithOne(f => f.MealType)
                 .HasForeignKey(f => f.MealTypeID)
                 .OnDelete(DeleteBehavior.Restrict);
+
 
             //Many to Many Intersection
             modelBuilder.Entity<FunctionRoom>()
