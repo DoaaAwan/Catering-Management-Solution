@@ -25,6 +25,7 @@ namespace CateringManagement.Controllers
             var functions = _context.Functions
                 .Include(f => f.Customer)
                 .Include(f => f.FunctionType)
+                .Include(f => f.FunctionRooms).ThenInclude(f=>f.Room)
                 .AsNoTracking();
             return View(await functions.ToListAsync());
         }
@@ -40,6 +41,7 @@ namespace CateringManagement.Controllers
             var function = await _context.Functions
                 .Include(f => f.Customer)
                 .Include(f => f.FunctionType)
+                .Include(f => f.FunctionRooms).ThenInclude(f => f.Room)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
 
@@ -158,6 +160,7 @@ namespace CateringManagement.Controllers
             var function = await _context.Functions
                 .Include(f => f.Customer)
                 .Include(f => f.FunctionType)
+                .Include(f => f.FunctionRooms).ThenInclude(f => f.Room)
                 .FirstOrDefaultAsync(m => m.ID == id);
 
             if (function == null)

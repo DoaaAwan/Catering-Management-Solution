@@ -117,6 +117,16 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FunctionType.Name)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FunctionRooms)
+        </dt>
+        <dd class="col-sm-10">
+            @foreach (var c in Model.FunctionRooms)
+            {
+                @c.Room.Name <br />
+            }
+        </dd>
+
     </dl>
 </div>
 <div>

@@ -24,6 +24,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Customer)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FunctionRooms)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -42,6 +45,12 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Customer.FullName)
+            </td>
+            <td>
+                @foreach (var c in item.FunctionRooms)
+                {
+                    @c.Room.Name <br />
+                }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

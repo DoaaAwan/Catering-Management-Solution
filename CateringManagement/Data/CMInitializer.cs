@@ -186,6 +186,58 @@ namespace CateringManagement.Data
 
                     context.SaveChanges();
                 }
+                // Seed Rooms if there aren't any.
+                if (!context.Rooms.Any())
+                {
+                    context.Rooms.AddRange(
+                        new Room
+                        {
+                            Name = "Master Ballroom"
+                        },
+                        new Room
+                        {
+                            Name = "Large Banquet Hall"
+                        },
+                        new Room
+                        {
+                            Name = "Small Banquet Hall"
+                        },
+                        new Room
+                        {
+                            Name = "Boardroom"
+                        },
+                        new Room
+                        {
+                            Name = "Theatre Room"
+                        },
+                        new Room
+                        {
+                            Name = "Media Room"
+                        });
+
+                    context.SaveChanges();
+                }
+                //FunctionRooms
+                if (!context.FunctionRooms.Any())
+                {
+                    context.FunctionRooms.AddRange(
+                        new FunctionRoom
+                        {
+                            RoomID = context.Rooms.FirstOrDefault(c => c.Name == "Theatre Room").ID,
+                            FunctionID = context.Functions.FirstOrDefault(p => p.Name == "Behind the Numbers: What’s Causing Growth in Food Prices").ID
+                        },
+                        new FunctionRoom
+                        {
+                            RoomID = context.Rooms.FirstOrDefault(c => c.Name == "Media Room").ID,
+                            FunctionID = context.Functions.FirstOrDefault(p => p.Name == "Xavier Birthday Party").ID
+                        },
+                        new FunctionRoom
+                        {
+                            RoomID = context.Rooms.FirstOrDefault(c => c.Name == "Boardroom").ID,
+                            FunctionID = context.Functions.FirstOrDefault(p => p.Name == "JPMorgan Chase Shareholders Meeting").ID
+                        });
+                    context.SaveChanges();
+                }
             }
             catch (Exception ex)
             {

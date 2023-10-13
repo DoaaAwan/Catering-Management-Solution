@@ -3,6 +3,7 @@ using System;
 using CateringManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CateringManagement.Data.CMMigrations
 {
     [DbContext(typeof(CateringContext))]
-    partial class CateringContextModelSnapshot : ModelSnapshot
+    [Migration("20231013175513_FunctionRoomsData")]
+    partial class FunctionRoomsData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.12");
