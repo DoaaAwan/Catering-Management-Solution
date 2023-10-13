@@ -1,5 +1,6 @@
 ﻿using CateringManagement.Data;
 using CateringManagement.Models;
+using CateringManagement.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -16,7 +17,7 @@ namespace CateringManagement.Controllers
         }
 
         // GET: Customers
-        public async Task<IActionResult> Index(string actionButton, string sortDirection = "asc", string sortField = "Customer")
+        public async Task<IActionResult> Index(int? page, string actionButton, string sortDirection = "asc", string sortField = "Customer")
         {
             //List of sort options.
             //NOTE: make sure this array has matching values to the column headings
@@ -93,7 +94,11 @@ namespace CateringManagement.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
 
-            return View(await customers.ToListAsync());
+            int pageSize = 10;//Change as required
+            var pagedData = await PaginatedList<Customer>.CreateAsync(_context.Customers.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+            //return View(await customers.ToListAsync());
         }
 
         // GET: Customers/Details/5

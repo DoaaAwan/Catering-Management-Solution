@@ -9,6 +9,7 @@ using CateringManagement.Data;
 using CateringManagement.Models;
 using CateringManagement.ViewModels;
 using Microsoft.EntityFrameworkCore.Storage;
+using CateringManagement.Utilities;
 
 namespace CateringManagement.Controllers
 {
@@ -22,7 +23,7 @@ namespace CateringManagement.Controllers
         }
 
         // GET: Functions
-        public async Task<IActionResult> Index(string SearchString, int? CustomerID, string actionButton, string sortDirection = "asc", string sortField = "Function Date")
+        public async Task<IActionResult> Index(string SearchString, int? CustomerID, int? page, string actionButton, string sortDirection = "asc", string sortField = "Function Date")
         {
             //Count the number of filters applied - start by assuming no filters
             ViewData["Filtering"] = "btn-outline-secondary";
@@ -71,6 +72,8 @@ namespace CateringManagement.Controllers
             //Before we sort, see if we have called for a change of filtering or sorting
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
+                page = 1;//Reset page to start
+
                 if (sortOptions.Contains(actionButton))//Change of sort is requested
                 {
                     if (actionButton == sortField) //Reverse order on same field
@@ -127,7 +130,11 @@ namespace CateringManagement.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
 
-            return View(await functions.ToListAsync());
+            int pageSize = 10;//Change as required
+            var pagedData = await PaginatedList<Function>.CreateAsync(functions.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+            //return View(await functions.ToListAsync());
         }
 
         // GET: Functions/Details/5
