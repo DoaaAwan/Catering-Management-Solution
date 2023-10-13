@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CateringManagement.Data;
 using CateringManagement.Models;
+using CateringManagement.ViewModels;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CateringManagement.Controllers
 {
@@ -57,6 +59,7 @@ namespace CateringManagement.Controllers
         public IActionResult Create()
         {
             Function function = new Function();
+            PopulateAssignedRoomData(function);
             PopulateDropDownLists(function);
             return View(function);
         }
@@ -66,10 +69,19 @@ namespace CateringManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,LobbySign,StartTime, EndTime, SetupNotes,DurationDays,BaseCharge,PerPersonCharge,GuaranteedNumber,SOCAN,Deposit,DepositPaid,NoHST,NoGratuity,Alcohol,MealTypeID,CustomerID,FunctionTypeID")] Function function) //changed date to StarTime, added SetupNotes, added EndTime, added Alcohol, added MealTypeID
+        public async Task<IActionResult> Create([Bind("ID,Name,LobbySign,StartTime, EndTime, SetupNotes,DurationDays,BaseCharge,PerPersonCharge,GuaranteedNumber,SOCAN,Deposit,DepositPaid,NoHST,NoGratuity,Alcohol,MealTypeID,CustomerID,FunctionTypeID")] Function function, string[] selectedOptions) //changed date to StarTime, added SetupNotes, added EndTime, added Alcohol, added MealTypeID
         {                                 
             try
             {
+                //Add the selected rooms
+                if (selectedOptions != null)
+                {
+                    foreach (var room in selectedOptions)
+                    {
+                        var roomToAdd = new FunctionRoom { FunctionID = function.ID, RoomID = int.Parse(room) };
+                        function.FunctionRooms.Add(roomToAdd);
+                    }
+                }
                 if (ModelState.IsValid)
                 {
                     _context.Add(function);
@@ -77,11 +89,15 @@ namespace CateringManagement.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
+            catch (RetryLimitExceededException /* dex */)
+            {
+                ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+            }
             catch (DbUpdateException)
             {
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
-            
+            PopulateAssignedRoomData(function);
             PopulateDropDownLists(function);
             return View(function);
         }
@@ -94,11 +110,14 @@ namespace CateringManagement.Controllers
                 return NotFound();
             }
 
-            var function = await _context.Functions.FindAsync(id);
+            var function = await _context.Functions
+                .Include(f => f.FunctionRooms).ThenInclude(f => f.Room)
+                .FirstOrDefaultAsync(f => f.ID == id);
             if (function == null)
             {
                 return NotFound();
             }
+            PopulateAssignedRoomData(function);
             PopulateDropDownLists(function);
             return View(function);
         }
@@ -108,16 +127,23 @@ namespace CateringManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id, string[] selectedOptions)
         {
-            // Go get the function to update
-            var functionToUpdate = await _context.Functions.FirstOrDefaultAsync(f => f.ID == id);
+            //Add Includes into LINQ
+            //Go get the function to update
+            var functionToUpdate = await _context.Functions
+                .Include(f => f.FunctionRooms).ThenInclude(f => f.Room)
+                .FirstOrDefaultAsync(f => f.ID == id);
 
             // Check that we got the function or exit with a not found error
             if (functionToUpdate == null)
             {
                 return NotFound();
             }
+
+            //Update the function rooms
+            UpdateFunctionRooms(selectedOptions, functionToUpdate);
+
 
             if (await TryUpdateModelAsync<Function>(functionToUpdate, "", 
                 f => f.Name, f => f.LobbySign, f => f.SetupNotes, f => f.StartTime, f => f.EndTime, f => f.BaseCharge, f => f.PerPersonCharge,
@@ -128,6 +154,10 @@ namespace CateringManagement.Controllers
                 {
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
+                }
+                catch (RetryLimitExceededException /* dex */)
+                {
+                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -145,6 +175,7 @@ namespace CateringManagement.Controllers
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
             }
+            PopulateAssignedRoomData(functionToUpdate);
             PopulateDropDownLists(functionToUpdate);
             return View(functionToUpdate);
         }
@@ -222,6 +253,55 @@ namespace CateringManagement.Controllers
         {
             ViewData["CustomerID"] = CustomerSelectList(function?.CustomerID);
             ViewData["FunctionTypeID"] = FunctionTypeList(function?.FunctionTypeID);
+        }
+
+        private void PopulateAssignedRoomData(Function function)
+        {
+            var allOptions = _context.Rooms; //grab all rooms for user to choose from 
+            var currentOptionIDs = new HashSet<int>(function.FunctionRooms.Select(b => b.RoomID));
+            var checkBoxes = new List<CheckOptionVM>();
+            foreach (var option in allOptions)
+            {
+                checkBoxes.Add(new CheckOptionVM
+                {
+                    ID = option.ID,
+                    DisplayText = option.Name,
+                    Assigned = currentOptionIDs.Contains(option.ID)
+                });
+            }
+            ViewData["RoomOptions"] = checkBoxes;
+        }
+
+        private void UpdateFunctionRooms(string[] selectedOptions, Function functionToUpdate)
+        {
+            if (selectedOptions == null)
+            {
+                functionToUpdate.FunctionRooms = new List<FunctionRoom>();
+                return;
+            }
+
+            var selectedOptionsHS = new HashSet<string>(selectedOptions);
+            var patientOptionsHS = new HashSet<int>
+                (functionToUpdate.FunctionRooms.Select(c => c.RoomID));//IDs of the currently selected conditions
+            foreach (var option in _context.Rooms)
+            {
+                if (selectedOptionsHS.Contains(option.ID.ToString())) //It is checked
+                {
+                    if (!patientOptionsHS.Contains(option.ID))  //but not currently in the history
+                    {
+                        functionToUpdate.FunctionRooms.Add(new FunctionRoom { FunctionID = functionToUpdate.ID, RoomID = option.ID });
+                    }
+                }
+                else
+                {
+                    //Checkbox Not checked
+                    if (patientOptionsHS.Contains(option.ID)) //but it is currently in the history - so remove it
+                    {
+                        FunctionRoom conditionToRemove = functionToUpdate.FunctionRooms.SingleOrDefault(c => c.RoomID == option.ID);
+                        _context.Remove(conditionToRemove);
+                    }
+                }
+            }
         }
         private bool FunctionExists(int id)
         {

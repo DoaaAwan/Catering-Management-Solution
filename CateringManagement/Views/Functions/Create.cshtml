@@ -107,6 +107,33 @@
                 </select>
                 <span asp-validation-for="FunctionTypeID" class="text-danger"></span>
             </div>
+                        <div class="form-group">
+                <label class="control-label">@Html.DisplayNameFor(model => model.FunctionRooms)</label>
+                <div class="m-2">
+                    <table>
+                        <tr>
+                            @{
+                                int cnt = 0;
+                                List<CateringManagement.ViewModels.CheckOptionVM> checkboxes = ViewBag.RoomOptions;
+                                foreach (var checkbox in checkboxes)
+                                {
+                                    if (cnt++ % 2 == 0)
+                                    {
+                                    @:</tr><tr>
+                                    }
+                                    @:<td>
+                                        <input type="checkbox"
+                                               name="selectedOptions"
+                                               value="@checkbox.ID"
+                                               @(Html.Raw(checkbox.Assigned ? "checked=\"checked\"" : "")) />
+                                        @checkbox.DisplayText @:&nbsp;&nbsp;
+                                    @:</td>
+                                }
+                            @:</tr>
+                            }
+                        </table>
+                    </div>
+                </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
