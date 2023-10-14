@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CateringManagement.Data.CMMigrations
 {
     [DbContext(typeof(CateringContext))]
-    [Migration("20231013175513_FunctionRoomsData")]
-    partial class FunctionRoomsData
+    [Migration("20231014020708_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,6 +28,13 @@ namespace CateringManagement.Data.CMMigrations
 
                     b.Property<string>("CompanyName")
                         .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CustomerCode")
@@ -53,6 +60,13 @@ namespace CateringManagement.Data.CMMigrations
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("ID");
 
                     b.HasIndex("CustomerCode")
@@ -72,6 +86,13 @@ namespace CateringManagement.Data.CMMigrations
 
                     b.Property<double>("BaseCharge")
                         .HasColumnType("REAL");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("CustomerID")
                         .HasColumnType("INTEGER");
@@ -119,6 +140,13 @@ namespace CateringManagement.Data.CMMigrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("StartTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
