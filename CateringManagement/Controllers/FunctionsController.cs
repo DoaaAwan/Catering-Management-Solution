@@ -351,6 +351,12 @@ namespace CateringManagement.Controllers
                 .OrderBy(d => d.LastName)
                 .ThenBy(d => d.FirstName), "ID", "FormalName", selectedId);
         }
+        private SelectList MealTypeList(int? selectedId)
+        {
+            return new SelectList(_context.MealTypes
+                .OrderBy(d => d.Name)
+                .ThenBy(d => d.ID), "ID", "Name", selectedId);
+        }
         private SelectList FunctionTypeList(int? selectedId)
         {
             return new SelectList(_context
@@ -361,6 +367,7 @@ namespace CateringManagement.Controllers
         {
             ViewData["CustomerID"] = CustomerSelectList(function?.CustomerID);
             ViewData["FunctionTypeID"] = FunctionTypeList(function?.FunctionTypeID);
+            ViewData["MealTypeID"] = MealTypeList(function?.MealTypeID);
         }
 
         private void PopulateAssignedRoomData(Function function)
