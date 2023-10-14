@@ -15,7 +15,7 @@ namespace CateringManagement.Data
             try
             {
                 //We can use this to delete the database and start fresh.
-                //context.Database.EnsureDeleted();
+                context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
                 //context.Database.Migrate();
 
@@ -156,7 +156,7 @@ namespace CateringManagement.Data
                             NoHST = false,
                             NoGratuity = false,
                             Alcohol = false,
-                            MealTypeID = context.MealTypes.FirstOrDefault(d => d.Name == "None").ID,
+                            MealTypeID = context.MealTypes.FirstOrDefault(d => d.Name == "Pescatarian").ID,
                             CustomerID = context.Customers.FirstOrDefault(c => c.FirstName == "Charles" && c.LastName == "Xavier").ID,
                             FunctionTypeID = context.FunctionTypes.FirstOrDefault(f => f.Name == "Birthday").ID
                         },
