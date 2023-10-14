@@ -2,7 +2,7 @@
 
 namespace CateringManagement.Models
 {
-    public class Function : IValidatableObject
+    public class Function : Auditable, IValidatableObject
     {
         public int ID { get; set; } //ID
 

@@ -2,7 +2,7 @@
 
 namespace CateringManagement.Models
 {
-    public class Customer
+    public class Customer : Auditable
     {
         public int ID { get; set; }
 

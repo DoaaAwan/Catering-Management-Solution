@@ -1,4 +1,5 @@
 ﻿using CateringManagement.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace CateringManagement.Data
@@ -15,6 +16,7 @@ namespace CateringManagement.Data
                 //We can use this to delete the database and start fresh.
                 //context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
+                //context.Database.Migrate();
 
                 // Look for any Customers.  Since we can't have Functions without Customers.
                 if (!context.Customers.Any())
