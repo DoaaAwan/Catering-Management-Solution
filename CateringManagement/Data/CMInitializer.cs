@@ -92,10 +92,6 @@ namespace CateringManagement.Data
                     context.MealTypes.AddRange(
                         new MealType
                         {
-                            Name = "None"
-                        },
-                        new MealType
-                        {
                             Name = "Vegetarian"
                         },
                         new MealType

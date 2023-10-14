@@ -11,6 +11,7 @@ using CateringManagement.ViewModels;
 using Microsoft.EntityFrameworkCore.Storage;
 using CateringManagement.Utilities;
 using CateringManagement.CustomControllers;
+using System.Numerics;
 
 namespace CateringManagement.Controllers
 {
@@ -235,7 +236,7 @@ namespace CateringManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string[] selectedOptions)
+        public async Task<IActionResult> Edit(int id, string[] selectedOptions, Byte[] RowVersion)
         {
             //Add Includes into LINQ
             //Go get the function to update
@@ -252,6 +253,8 @@ namespace CateringManagement.Controllers
             //Update the function rooms
             UpdateFunctionRooms(selectedOptions, functionToUpdate);
 
+            //Put the original RowVersion value in the OriginalValues collection for the entity
+            _context.Entry(functionToUpdate).Property("RowVersion").OriginalValue = RowVersion;
 
             if (await TryUpdateModelAsync<Function>(functionToUpdate, "", 
                 f => f.Name, f => f.LobbySign, f => f.SetupNotes, f => f.StartTime, f => f.EndTime, f => f.BaseCharge, f => f.PerPersonCharge,
@@ -267,15 +270,94 @@ namespace CateringManagement.Controllers
                 {
                     ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)// Added for concurrency
                 {
-                    if (!FunctionExists(functionToUpdate.ID))
+                    var exceptionEntry = ex.Entries.Single();
+                    var clientValues = (Function)exceptionEntry.Entity;
+                    var databaseEntry = exceptionEntry.GetDatabaseValues();
+                    if (databaseEntry == null)
                     {
-                        return NotFound();
+                        ModelState.AddModelError("",
+                            "Unable to save changes. The Patient was deleted by another user.");
                     }
                     else
                     {
-                        throw;
+                        var databaseValues = (Function)databaseEntry.ToObject();
+                        if (databaseValues.Name != clientValues.Name)
+                            ModelState.AddModelError("Name", "Current value: "
+                                + databaseValues.Name);
+                        if (databaseValues.LobbySign != clientValues.LobbySign)
+                            ModelState.AddModelError("LobbySign", "Current value: "
+                                + databaseValues.LobbySign);
+                        if (databaseValues.SetupNotes != clientValues.SetupNotes)
+                            ModelState.AddModelError("SetupNotes", "Current value: "
+                                + databaseValues.SetupNotes);
+                        if (databaseValues.StartTime != clientValues.StartTime)
+                            ModelState.AddModelError("StartTime", "Current value: "
+                                + String.Format("{0:d}", databaseValues.StartTime));
+                        if (databaseValues.EndTime != clientValues.EndTime)
+                            ModelState.AddModelError("EndTime", "Current value: "
+                                + String.Format("{0:d}", databaseValues.EndTime));
+                        if (databaseValues.BaseCharge != clientValues.BaseCharge)
+                            ModelState.AddModelError("BaseCharge", "Current value: "
+                                + databaseValues.BaseCharge);
+                        if (databaseValues.PerPersonCharge != clientValues.PerPersonCharge)
+                            ModelState.AddModelError("PerPersonCharge", "Current value: "
+                                + databaseValues.PerPersonCharge);
+                        if (databaseValues.GuaranteedNumber != clientValues.GuaranteedNumber)
+                            ModelState.AddModelError("GuaranteedNumber", "Current value: "
+                                + databaseValues.GuaranteedNumber);
+                        if (databaseValues.SOCAN != clientValues.SOCAN)
+                            ModelState.AddModelError("SOCAN", "Current value: "
+                                + databaseValues.SOCAN);
+                        if (databaseValues.Deposit != clientValues.Deposit)
+                            ModelState.AddModelError("Deposit", "Current value: "
+                                + databaseValues.Deposit);
+                        if (databaseValues.DepositPaid != clientValues.DepositPaid)
+                            ModelState.AddModelError("DepositPaid", "Current value: "
+                                + databaseValues.DepositPaid);
+                        if (databaseValues.NoHST != clientValues.NoHST)
+                            ModelState.AddModelError("NoHST", "Current value: "
+                                + databaseValues.NoHST);
+                        if (databaseValues.NoGratuity != clientValues.NoGratuity)
+                            ModelState.AddModelError("NoGratuity", "Current value: "
+                                + databaseValues.NoGratuity);
+                        if (databaseValues.Alcohol != clientValues.Alcohol)
+                            ModelState.AddModelError("Alcohol", "Current value: "
+                                + databaseValues.Alcohol);
+                        //For the foreign key, we need to go to the database to get the information to show
+                        if (databaseValues.CustomerID != clientValues.CustomerID)
+                        {
+                            Customer databaseCustomer = await _context.Customers.FirstOrDefaultAsync(i => i.ID == databaseValues.CustomerID);
+                            ModelState.AddModelError("CustomerID", $"Current value: {databaseCustomer?.FullName}");
+                        }
+                        if (databaseValues.FunctionTypeID != clientValues.FunctionTypeID)
+                        {
+                            FunctionType databaseFunctionType = await _context.FunctionTypes.FirstOrDefaultAsync(i => i.ID == databaseValues.FunctionTypeID);
+                            ModelState.AddModelError("FunctionTypeID", $"Current value: {databaseFunctionType?.Name}");
+                        }
+                        //A little extra work for the nullable foreign key.  No sense going to the database and asking for something
+                        //we already know is not there.
+                        if (databaseValues.MealTypeID != clientValues.MealTypeID)
+                        {
+                            if (databaseValues.MealTypeID.HasValue)
+                            {
+                                MealType databaseMedicalTrial = await _context.MealTypes.FirstOrDefaultAsync(i => i.ID == databaseValues.MealTypeID);
+                                ModelState.AddModelError("MealTypeID", $"Current value: {databaseMedicalTrial?.Name}");
+                            }
+                            else
+
+                            {
+                                ModelState.AddModelError("MedicalTrialID", $"Current value: None");
+                            }
+                        }
+                        ModelState.AddModelError(string.Empty, "The record you attempted to edit "
+                                + "was modified by another user after you received your values. The "
+                                + "edit operation was canceled and the current values in the database "
+                                + "have been displayed. If you still want to save your version of this record, click "
+                                + "the Save button again. Otherwise click the 'Back to Patient List' hyperlink.");
+                        functionToUpdate.RowVersion = (byte[])databaseValues.RowVersion;
+                        ModelState.Remove("RowVersion");
                     }
                 }
                 catch (DbUpdateException)

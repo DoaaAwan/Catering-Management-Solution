@@ -123,6 +123,10 @@ namespace CateringManagement.Models
         [Display(Name = "Function Type")]
         public FunctionType FunctionType { get; set; } //FunctionType
 
+        [ScaffoldColumn(false)]
+        [Timestamp]
+        public Byte[] RowVersion { get; set; }//Added for concurrency
+
 
         [Display(Name = "Function Rooms")]
         public ICollection<FunctionRoom> FunctionRooms { get; set; } = new HashSet<FunctionRoom>();
