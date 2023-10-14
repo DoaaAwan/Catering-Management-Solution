@@ -1,10 +1,11 @@
-﻿using CateringManagement.Models;
+﻿using CateringManagement.CustomControllers;
+using CateringManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace CateringManagement.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : CognizantController
     {
         private readonly ILogger<HomeController> _logger;
 

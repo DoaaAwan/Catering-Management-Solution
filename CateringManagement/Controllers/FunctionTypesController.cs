@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CateringManagement.Data;
 using CateringManagement.Models;
+using CateringManagement.CustomControllers;
 
 namespace CateringManagement.Controllers
 {
-    public class FunctionTypesController : Controller
+    public class FunctionTypesController : CognizantController
     {
         private readonly CateringContext _context;
 

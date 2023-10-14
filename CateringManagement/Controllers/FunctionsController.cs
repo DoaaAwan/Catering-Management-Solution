@@ -14,7 +14,7 @@ using CateringManagement.CustomControllers;
 
 namespace CateringManagement.Controllers
 {
-    public class FunctionsController : CognizantController
+    public class FunctionsController : ElephantController
     {
         private readonly CateringContext _context;
 
@@ -194,7 +194,7 @@ namespace CateringManagement.Controllers
                 {
                     _context.Add(function);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Details", new { function.ID });
                 }
             }
             catch (RetryLimitExceededException /* dex */)
@@ -261,7 +261,7 @@ namespace CateringManagement.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Details", new { functionToUpdate.ID });
                 }
                 catch (RetryLimitExceededException /* dex */)
                 {
@@ -328,7 +328,7 @@ namespace CateringManagement.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return Redirect(ViewData["returnURL"].ToString());
             }
             catch (DbUpdateException)
             {

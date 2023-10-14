@@ -8,7 +8,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CateringManagement.Controllers
 {
-    public class CustomersController : CognizantController
+    public class CustomersController : ElephantController
     {
         private readonly CateringContext _context;
 
@@ -144,7 +144,7 @@ namespace CateringManagement.Controllers
                 {
                     _context.Add(customer);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Details", new { customer.ID });
                 }
             }
             catch (DbUpdateException dex)
@@ -202,7 +202,7 @@ namespace CateringManagement.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Details", new { customerToUpdate.ID });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -266,7 +266,7 @@ namespace CateringManagement.Controllers
                     _context.Customers.Remove(customer);
                 }
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return Redirect(ViewData["returnURL"].ToString());
             }
             catch (DbUpdateException dex)
             {
