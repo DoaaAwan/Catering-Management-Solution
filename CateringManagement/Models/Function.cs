@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+//Done by: Doaa Awan
 
 namespace CateringManagement.Models
 {
@@ -58,13 +59,6 @@ namespace CateringManagement.Models
         [DataType(DataType.DateTime)]
 
         public DateTime? EndTime { get; set; } //EndTime
-
-        //Eliminate the DurationDays property from the Function class
-
-        //[Required(ErrorMessage = "You must enter the duration.")]
-        //[Display(Name = "Duration Days")]
-        //[Range(1, int.MaxValue, ErrorMessage = "Duration must be greater than zero.")]
-        //public int DurationDays { get; set; } = 1;
 
         [Required(ErrorMessage = "You must enter the Base Charge.")]
         [Display(Name = "Base Charge")]

@@ -37,11 +37,6 @@
                 <span asp-validation-for="EndTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-@*                <label asp-for="DurationDays" class="control-label"></label>
-                <input asp-for="DurationDays" class="form-control" />
-                <span asp-validation-for="DurationDays" class="text-danger"></span>*@
-            </div>
-            <div class="form-group">
                 <label asp-for="BaseCharge" class="control-label"></label>
                 <input asp-for="BaseCharge" class="form-control" />
                 <span asp-validation-for="BaseCharge" class="text-danger"></span>
@@ -86,7 +81,7 @@
                     <input class="form-check-input" asp-for="Alcohol" /> @Html.DisplayNameFor(model => model.Alcohol)
                 </label>
             </div>
-            <div class="form-group">
+            <div class="form-group"> @*added Meal Type*@
                 <label asp-for="MealTypeID" class="control-label"></label>
                 <select asp-for="MealTypeID" class="form-control" asp-items="ViewBag.MealTypeID">
                     <option value="">Select a Meal Type</option>

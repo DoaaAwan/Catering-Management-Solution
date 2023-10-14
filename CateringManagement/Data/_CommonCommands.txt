@@ -4,4 +4,4 @@ Update-Database -Context ApplicationDbContext
 Add-Migration -Context CateringContext -o Data\CMMigrations Initial
 Update-Database -Context CateringContext 
 
-	only this one works when updating after adding properties
+	
