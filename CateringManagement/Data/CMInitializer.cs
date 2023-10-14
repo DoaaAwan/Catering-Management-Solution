@@ -15,7 +15,7 @@ namespace CateringManagement.Data
             try
             {
                 //We can use this to delete the database and start fresh.
-                context.Database.EnsureDeleted();
+                //context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
                 //context.Database.Migrate();
 
