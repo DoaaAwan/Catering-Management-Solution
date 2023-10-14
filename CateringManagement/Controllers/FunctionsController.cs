@@ -10,10 +10,11 @@ using CateringManagement.Models;
 using CateringManagement.ViewModels;
 using Microsoft.EntityFrameworkCore.Storage;
 using CateringManagement.Utilities;
+using CateringManagement.CustomControllers;
 
 namespace CateringManagement.Controllers
 {
-    public class FunctionsController : Controller
+    public class FunctionsController : CognizantController
     {
         private readonly CateringContext _context;
 
@@ -23,7 +24,7 @@ namespace CateringManagement.Controllers
         }
 
         // GET: Functions
-        public async Task<IActionResult> Index(string SearchString, int? CustomerID, int? page, string actionButton, string sortDirection = "asc", string sortField = "Function Date")
+        public async Task<IActionResult> Index(string SearchString, int? CustomerID, int? page, int? pageSizeID, string actionButton, string sortDirection = "asc", string sortField = "Function Date")
         {
             //Count the number of filters applied - start by assuming no filters
             ViewData["Filtering"] = "btn-outline-secondary";
@@ -130,7 +131,9 @@ namespace CateringManagement.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
 
-            int pageSize = 10;//Change as required
+            //Handle Paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
             var pagedData = await PaginatedList<Function>.CreateAsync(functions.AsNoTracking(), page ?? 1, pageSize);
 
             return View(pagedData);

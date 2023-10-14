@@ -1,4 +1,5 @@
-﻿using CateringManagement.Data;
+﻿using CateringManagement.CustomControllers;
+using CateringManagement.Data;
 using CateringManagement.Models;
 using CateringManagement.Utilities;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CateringManagement.Controllers
 {
-    public class CustomersController : Controller
+    public class CustomersController : CognizantController
     {
         private readonly CateringContext _context;
 
@@ -17,7 +18,7 @@ namespace CateringManagement.Controllers
         }
 
         // GET: Customers
-        public async Task<IActionResult> Index(int? page, string actionButton, string sortDirection = "asc", string sortField = "Customer")
+        public async Task<IActionResult> Index(int? page, int? pageSizeID, string actionButton, string sortDirection = "asc", string sortField = "Customer")
         {
             //List of sort options.
             //NOTE: make sure this array has matching values to the column headings
@@ -94,7 +95,9 @@ namespace CateringManagement.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
 
-            int pageSize = 10;//Change as required
+            //Handle Paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
             var pagedData = await PaginatedList<Customer>.CreateAsync(_context.Customers.AsNoTracking(), page ?? 1, pageSize);
 
             return View(pagedData);
